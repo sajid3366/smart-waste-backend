@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  auth-service:
+    build: ./services/auth
+    ports:
+      - "5001:5001"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/
+      - DB_NAME=auth_service
+    depends_on:
+      - mongo
+      
+
+  waste-service:
+    build: ./services/waste
+    ports:
+      - "5002:5002"
+    environment:
+      - MONGO_URI=mongodb+srv://worksatdev:password@cluster0.orhhg1m.mongodb.net/waste_service?retryWrites=true&w=majority&appName=Cluster0
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  haproxy:
+    image: haproxy:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - auth-service
+      - waste-service
+
+volumes:
+  mongo-data:
