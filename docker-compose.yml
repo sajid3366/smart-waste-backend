@@ -1,42 +1,59 @@
-version: "3"
+version: '3.8'
 
 services:
   auth-service:
-    build: ./services/auth
+    build: ./auth-service
+    container_name: auth-service
     ports:
       - "5001:5001"
     environment:
-      - MONGO_URI=mongodb://mongo:27017/
-      - DB_NAME=auth_service
-    depends_on:
-      - mongo
-      
+      - NODE_ENV=production
+      - PORT=5001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - app-network
 
   waste-service:
-    build: ./services/waste
+    build: ./waste-service
+    container_name: waste-service
     ports:
       - "5002:5002"
     environment:
-      - MONGO_URI=mongodb+srv://worksatdev:password@cluster0.orhhg1m.mongodb.net/waste_service?retryWrites=true&w=majority&appName=Cluster0
-    depends_on:
-      - mongo
+      - NODE_ENV=production
+      - PORT=5002
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - app-network
 
-  mongo:
-    image: mongo:6
+  swc-haproxy:
+    image: haproxy:3.2
+    container_name: swc-haproxy
     ports:
-      - "27017:27017"
+      - "8080:80"
     volumes:
-      - mongo-data:/data/db
-
-  haproxy:
-    image: haproxy:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     depends_on:
-      - auth-service
-      - waste-service
+      auth-service:
+        condition: service_healthy
+      waste-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app-network
 
-volumes:
-  mongo-data:
+networks:
+  app-network:
+    driver: bridge
+    

@@ -14,14 +14,9 @@ app.use(cors({
 }))
 
 
-app.get('/health', (req, res) => res.json({ status: 'ok', service: 'auth' }));
-
-app.get('/', (req, res) => {
-    res.send('Smart Waste [auth] is running properly')
-})
-
-// Routes
-app.use('/api/auth', authRoutes);
+app.get('/auth/health', (req, res) => res.json({ status: 'ok', service: 'auth' }));
+app.get('/', (req, res) => res.send('Smart Waste [auth] is running properly'));
+app.use('/auth', authRoutes);
 
 
 

@@ -12,12 +12,11 @@ app.use(cors({
     credentials: true
 }))
 
-app.get('/health', (req, res)=> res.json({status: 'ok', service: 'waste'}));
-
-app.use('/api/waste', wasteRoutes);
-
-app.get('/', (res, req) =>{
+app.get('/waste/health', (req, res) => res.json({ status: 'ok', service: 'waste' }));
+// Fix parameter order
+app.get('/', (req, res) => {
     res.send('Smart Waste [waste-service] is running properly')
-})
+});
+app.use('/waste', wasteRoutes);
 
 export default app;
