@@ -62,6 +62,29 @@ export const login = async (req, res) => {
   }
 };
 
+export const logout = (req, res) => {
+  try {
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict',
+      path: '/',
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Logged out successfully',
+    });
+  } catch (error) {
+    console.error('Logout error:', error.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to log out',
+    });
+  }
+};
+
+
 // ♻️ Refresh Token Controller
 export const refresh = async (req, res) => {
   const token = req.cookies.refreshToken;

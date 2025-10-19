@@ -1,8 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import authRoutes from "./routes/authRoutes.js";
 import cookieParser from "cookie-parser";
+import authRoutes from "./routes/authRoutes.js";
+import correlationIdMiddleware from "./middleware/correlation.js";
+import logger from "./lib/logger.js";
 
 dotenv.config();
 const app = express();
@@ -17,17 +19,38 @@ app.use(
   })
 );
 
+// Correlation ID + Logging middleware
+app.use(correlationIdMiddleware);
+
 app.get("/auth/health", (req, res) =>
   res.json({ status: "ok", service: "auth" })
 );
-app.get("/", (req, res) => res.send("Smart Waste [auth] is running properly"));
 
-// ✅ Mount routes
+app.get("/", (req, res) => {
+  logger.info({
+    message: "Health check route hit",
+    correlationId: req.correlationId,
+  });
+  res.send("Smart Waste [auth] is running properly");
+});
+
+// Routes
 app.use("/auth", authRoutes);
 
-// ✅ Start server
+// Error logging
+app.use((err, req, res, next) => {
+  logger.error({
+    message: err.message,
+    correlationId: req.correlationId,
+    stack: err.stack,
+  });
+  res.status(500).json({ error: "Internal Server Error" });
+});
+
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
-  console.log(`✅ Auth service running on port ${PORT}`);
+  logger.info(`✅ Auth service running on port ${PORT}`);
+  // console.log(`✅ Auth service running on port ${PORT}`);
 });
-export default app
+
+export default app;
