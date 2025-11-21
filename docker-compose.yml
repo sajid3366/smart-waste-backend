@@ -11,7 +11,7 @@ services:
       - NODE_ENV=production
       - PORT=5001
     volumes:
-      - ./auth-service/logs:/usr/src/app/logs   # logs for Filebeat
+      - ./auth-service/logs:/usr/src/app/logs # logs for Filebeat
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:5001/auth/health || exit 1"]
       interval: 30s
@@ -34,9 +34,10 @@ services:
       - NODE_ENV=production
       - PORT=5002
     volumes:
-      - ./waste-service/logs:/usr/src/app/logs  # logs for Filebeat
+      - ./waste-service/logs:/usr/src/app/logs # logs for Filebeat
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://127.0.0.1:5002/waste/health || exit 1"]
+      test:
+        ["CMD-SHELL", "curl -f http://127.0.0.1:5002/waste/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -117,12 +118,14 @@ services:
     image: docker.elastic.co/beats/filebeat:7.17.13
     container_name: filebeat
     user: root
+    command: filebeat -e -c /usr/share/filebeat/filebeat.yml
     volumes:
-      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - ./auth-service/logs:/usr/src/app/auth-logs:ro
-      - ./waste-service/logs:/usr/src/app/waste-logs:ro
+      - ./auth-service/logs:/usr/src/app/logs/auth:ro
+      - ./waste-service/logs:/usr/src/app/logs/waste:ro
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
     depends_on:
       - logstash
+    restart: unless-stopped
     networks:
       - app-network
 

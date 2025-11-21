@@ -1,3 +1,10 @@
 {"level":"info","message":"✅ Auth service running on port 8001","timestamp":"2025-10-19T14:42:08.141Z"}
 {"level":"info","message":"✅ Auth service running on port 8001","timestamp":"2025-10-19T14:48:57.670Z"}
 {"level":"info","message":"✅ Auth service running on port 8001","timestamp":"2025-10-19T14:53:06.481Z"}
+{"level":"info","message":"✅ Auth service running on port 8001","timestamp":"2025-10-26T16:11:25.266Z"}
+{"level":"info","message":"✅ Auth service running on port 8001","timestamp":"2025-10-26T16:16:22.960Z"}
+{"correlationId":"903851e3-da15-4343-899a-714770a2615d","level":"info","message":"Incoming request","method":"POST","path":"/auth/login","timestamp":"2025-10-26T16:17:41.510Z"}
+{"correlationId":"de034e70-ff4a-4eac-9776-d8814e1ee5bc","level":"info","message":"Incoming request","method":"POST","path":"/auth/login","timestamp":"2025-10-26T16:40:33.830Z"}
+{"correlationId":"7412c626-5ba3-4bea-a5b8-39350bcd1fdb","level":"info","message":"Incoming request","method":"POST","path":"/auth/login","timestamp":"2025-10-26T16:40:48.215Z"}
+{"level":"info","message":"✅ Auth service running on port 8001","service":"auth-service","timestamp":"2025-10-26T17:00:09.490Z"}
+{"level":"info","message":"✅ Auth service running on port 8001","service":"auth-service","timestamp":"2025-10-26T20:56:35.413Z"}

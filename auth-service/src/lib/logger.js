@@ -9,12 +9,16 @@ if (!fs.existsSync(logDir)) {
 
 const logger = createLogger({
   level: "info",
-  format: format.combine(format.timestamp(), format.json()),
+  defaultMeta: { service: "auth-service" }, // ✅ Always include service name
+  format: format.combine(
+    format.timestamp(),
+    format.json()
+  ),
   transports: [
     new transports.File({
       filename: path.join(logDir, "auth-service.log"),
     }),
-    new transports.Console(), // optional for container logs
+    new transports.Console(), // optional: shows logs in Docker console
   ],
 });
 
